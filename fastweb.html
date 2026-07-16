@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastWeb | سریع، دقیق، قدرتمند</title>
+    <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #1a1a1a;
+            --primary: #1a1a1a;
+            --gold: #D4AF37;
+            --card: #ffffff;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --border: #e0e0e0;
+        }
+        .dark-mode {
+            --bg: #0d0d0d;
+            --text: #f0f0f0;
+            --primary: #D4AF37;
+            --gold: #D4AF37;
+            --card: #1a1a1a;
+            --shadow: 0 10px 30px rgba(212,175,55,0.15);
+            --border: #333;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Vazir', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: all 0.4s ease;
+            line-height: 1.8;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #0d0d0d;
+            box-shadow: 0 4px 20px rgba(212,175,55,0.3);
+            position: sticky; top: 0; z-index: 1000;
+            backdrop-filter: blur(10px); border-bottom: 2px solid var(--gold);
+        }
+        nav {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 25px;
+        }
+        .logo { font-size: 32px; font-weight: 900; color: var(--gold); letter-spacing: -1px; cursor: pointer; user-select: none; }
+        .logo span { color: #ffffff; }
+
+        .menu-dots { position: relative; font-size: 32px; cursor: pointer; color: var(--gold); padding: 10px; font-weight: 700; }
+        .menu-dropdown {
+            display: none; position: absolute; top: 100%; left: 0;
+            background: #1a1a1a; border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(212,175,55,0.3);
+            min-width: 220px; z-index: 1001; overflow: hidden; border: 1px solid var(--gold);
+        }
+        .menu-dropdown.active { display: block; }
+        .menu-dropdown a {
+            display: block; padding: 15px 20px; text-decoration: none;
+            color: #ffffff; font-weight: 600; transition: 0.3s; border-bottom: 1px solid #333;
+        }
+        .menu-dropdown a:hover { background: var(--gold); color: #0d0d0d; }
+        .menu-dropdown a:last-child { border-bottom: none; }
+
+        /* ========== کاراکتر فَستِر ========== */
+        .faster-container {
+            position: fixed; z-index: 9997; cursor: pointer;
+            transition: left 0.8s ease-in-out, top 0.8s ease-in-out, transform 0.3s;
+        }
+        .faster-container:hover { transform: scale(1.1); }
+        .faster-body {
+            position: relative; width: 70px; height: 55px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            border: 2px solid var(--gold);
+        }
+        .faster-screen {
+            position: absolute; top: 8px; left: 8px; right: 8px; height: 20px;
+            background: #1a1a2e; border-radius: 5px; overflow: hidden;
+        }
+        .faster-eyes {
+            display: flex; justify-content: space-around; align-items: center;
+            height: 100%; padding: 0 8px;
+        }
+        .faster-eye {
+            width: 8px; height: 10px; background: var(--gold);
+            border-radius: 50%; animation: blink 3s infinite;
+        }
+        @keyframes blink { 0%,95%,100% { transform: scaleY(1); } 97% { transform: scaleY(0.1); } }
+        .faster-mouth {
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+            width: 16px; height: 6px; background: var(--gold); border-radius: 0 0 8px 8px;
+        }
+        .faster-legs {
+            display: flex; justify-content: space-between; padding: 0 12px; margin-top: 2px;
+        }
+        .faster-leg {
+            width: 8px; height: 15px; background: var(--gold); border-radius: 0 0 5px 5px;
+            animation: walk 0.6s ease-in-out infinite;
+        }
+        .faster-leg:nth-child(2) { animation-delay: 0.3s; }
+        @keyframes walk { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .faster-arms {
+            position: absolute; top: 15px; display: flex; width: 100%;
+            justify-content: space-between; pointer-events: none;
+        }
+        .faster-arm {
+            width: 10px; height: 20px; background: #2c3e50;
+            border-radius: 10px; position: relative;
+        }
+        .faster-arm-left { left: -15px; animation: armWave 1s ease-in-out infinite; }
+        .faster-arm-right { right: -15px; animation: armWave 1s ease-in-out infinite 0.5s; }
+        @keyframes armWave { 0%,100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
+
+        .faster-speech {
+            position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
+            background: var(--card); color: var(--text); padding: 10px 15px;
+            border-radius: 20px; font-size: 13px; font-weight: 700;
+            box-shadow: var(--shadow); white-space: nowrap;
+            opacity: 0; transition: 0.3s; pointer-events: none;
+            border: 1px solid var(--gold);
+        }
+        .faster-container:hover .faster-speech,
+        .faster-speech.show { opacity: 1; }
+
+        /* بقیه استایل‌ها */
+        .hero {
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #0d0d0d 100%);
+            color: white; text-align: center; padding: 100px 20px 120px;
+            position: relative; overflow: hidden; border-bottom: 3px solid var(--gold);
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        .hero-content { position: relative; z-index: 1; }
+        .hero h1 { font-size: 50px; font-weight: 900; margin-bottom: 15px; }
+        .hero h1 span { color: var(--gold); }
+        .hero p { font-size: 20px; opacity: 0.95; margin-bottom: 35px; color: #cccccc; }
+        .btn {
+            display: inline-block; padding: 16px 35px; background: var(--gold);
+            color: #0d0d0d; text-decoration: none; border-radius: 50px;
+            font-weight: 700; font-size: 16px; transition: 0.3s;
+            border: none; cursor: pointer; margin: 5px; font-family: 'Vazir', sans-serif;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(212,175,55,0.4); }
+        .btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); }
+        .btn-outline:hover { background: var(--gold); color: #0d0d0d; }
+
+        section { max-width: 1200px; margin: 80px auto; padding: 0 25px; }
+        .section-title { text-align: center; font-size: 36px; font-weight: 900; color: var(--gold); margin-bottom: 15px; }
+        .section-subtitle { text-align: center; color: var(--text); opacity: 0.7; margin-bottom: 50px; font-size: 16px; }
+
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .portfolio-card {
+            background: var(--card); border-radius: 20px; overflow: hidden;
+            box-shadow: var(--shadow); transition: 0.3s; text-align: center;
+            border: 2px solid var(--border);
+        }
+        .portfolio-card:hover { transform: translateY(-8px); border-color: var(--gold); }
+        .portfolio-preview {
+            height: 200px; background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 70px; color: var(--gold); border-bottom: 2px solid var(--gold);
+        }
+        .portfolio-info { padding: 20px; }
+        .badge {
+            display: inline-block; padding: 5px 15px; background: var(--gold);
+            color: #0d0d0d; border-radius: 50px; font-size: 12px; font-weight: 700; margin: 5px;
+        }
+
+        .step-form {
+            background: var(--card); border-radius: 25px; padding: 50px;
+            box-shadow: var(--shadow); max-width: 700px; margin: 0 auto; border: 2px solid var(--gold);
+        }
+        .step { display: none; }
+        .step.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .step-indicator { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
+        .step-dot { width: 12px; height: 12px; border-radius: 50%; background: #ddd; transition: 0.3s; }
+        .step-dot.active { background: var(--gold); width: 30px; border-radius: 20px; }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 8px; color: var(--gold); font-size: 18px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 14px 18px; border: 2px solid var(--border);
+            border-radius: 12px; font-family: 'Vazir', sans-serif; font-size: 15px;
+            transition: 0.3s; background: var(--bg); color: var(--text);
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--gold); box-shadow: 0 0 0 4px rgba(212,175,55,0.15);
+        }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 30px; }
+        .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 12px; }
+        .color-option {
+            width: 100%; aspect-ratio: 1; border-radius: 15px; cursor: pointer;
+            border: 3px solid transparent; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); position: relative;
+        }
+        .color-option:hover { transform: scale(1.1); border-color: var(--gold); }
+        .color-option.selected { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(212,175,55,0.4); }
+        .color-option.selected::after {
+            content: '✓'; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); color: white; font-weight: 900;
+            font-size: 20px; text-shadow: 0 0 5px black;
+        }
+        .selected-colors-display { display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
+        .selected-color-tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 8px 15px; border-radius: 50px; font-size: 13px;
+            font-weight: 700; color: white; cursor: pointer;
+        }
+        .character-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; }
+        .character-card {
+            background: var(--bg); border-radius: 20px; padding: 25px;
+            text-align: center; cursor: pointer; border: 3px solid var(--border);
+            transition: 0.3s; box-shadow: var(--shadow);
+        }
+        .character-card:hover { transform: translateY(-5px); }
+        .character-card.selected { border-color: var(--gold); background: #1a1a1a; color: white; }
+        .character-emoji { font-size: 55px; margin-bottom: 10px; }
+        .character-name { font-weight: 700; font-size: 14px; }
+        .price-display {
+            text-align: center; font-size: 28px; font-weight: 900;
+            color: var(--gold); margin: 20px 0; padding: 20px;
+            background: #0d0d0d; border-radius: 15px; border: 2px solid var(--gold);
+        }
+        .thank-you-page {
+            display: none; text-align: center; padding: 60px 20px;
+            background: var(--card); border-radius: 25px;
+            box-shadow: var(--shadow); max-width: 700px; margin: 80px auto;
+            border: 3px solid var(--gold);
+        }
+        .thank-you-page.active { display: block; animation: fadeIn 0.6s ease; }
+        .thank-you-icon { font-size: 100px; margin-bottom: 20px; }
+        .thank-you-page h2 { color: var(--gold); font-size: 32px; margin-bottom: 15px; }
+        .admin-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+            z-index: 9999; justify-content: center; align-items: center;
+        }
+        .admin-overlay.active { display: flex; }
+        .admin-panel {
+            background: #1a1a1a; border-radius: 20px; padding: 30px;
+            width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto;
+            position: relative; color: white; border: 2px solid var(--gold);
+        }
+        .close-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gold); }
+        .password-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+            z-index: 10000; justify-content: center; align-items: center;
+        }
+        .password-overlay.active { display: flex; }
+        .password-box {
+            background: #1a1a1a; border-radius: 15px; padding: 30px;
+            text-align: center; color: white; border: 2px solid var(--gold);
+        }
+        .password-box input {
+            padding: 12px; margin: 10px 0; border-radius: 10px;
+            border: 1px solid var(--gold); font-family: 'Vazir', sans-serif;
+            text-align: center; background: #0d0d0d; color: white;
+        }
+        .order-card {
+            background: #0d0d0d; border-radius: 15px; padding: 20px;
+            margin: 15px 0; border-right: 5px solid var(--gold); color: white;
+        }
+        .order-card.priority-high { border-right-color: #e74c3c; }
+        footer {
+            background: #0d0d0d; color: white; padding: 50px 20px;
+            margin-top: 80px; border-top: 3px solid var(--gold);
+        }
+        .footer-content {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px; text-align: center;
+        }
+        .footer-section h4 { color: var(--gold); margin-bottom: 15px; font-size: 20px; }
+        .footer-section p { margin: 8px 0; font-size: 15px; opacity: 0.9; }
+        .footer-section i { color: var(--gold); margin-left: 8px; }
+        .footer-bottom { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; font-size: 13px; opacity: 0.7; }
+        .theme-toggle {
+            position: fixed; bottom: 25px; left: 25px;
+            width: 55px; height: 55px; border-radius: 50%;
+            background: var(--gold); color: #0d0d0d; border: none;
+            font-size: 24px; cursor: pointer; z-index: 9998;
+            box-shadow: 0 5px 20px rgba(212,175,55,0.4);
+            transition: 0.3s; display: flex; align-items: center;
+            justify-content: center; font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 28px; }
+            .step-form { padding: 25px; }
+            .section-title { font-size: 28px; }
+            .faster-body { width: 55px; height: 42px; }
+            .faster-screen { height: 15px; }
+            .faster-eye { width: 6px; height: 7px; }
+            .faster-arm-left { left: -10px; }
+            .faster-arm-right { right: -10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="theme-toggle" onclick="toggleTheme()" title="تغییر حالت شب و روز">🌓</button>
+
+    <!-- ========== کاراکتر فَستِر ========== -->
+    <div class="faster-container" id="faster">
+        <div class="faster-speech" id="fasterSpeech">👋 سلام! من فَستِر هستم!</div>
+        <div class="faster-body">
+            <div class="faster-screen">
+                <div class="faster-eyes">
+                    <div class="faster-eye"></div>
+                    <div class="faster-eye"></div>
+                </div>
+            </div>
+            <div class="faster-mouth"></div>
+            <div class="faster-arms">
+                <div class="faster-arm faster-arm-left"></div>
+                <div class="faster-arm faster-arm-right"></div>
+            </div>
+        </div>
+        <div class="faster-legs">
+            <div class="faster-leg"></div>
+            <div class="faster-leg"></div>
+        </div>
+    </div>
+
+    <!-- پنل رمز -->
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-box">
+            <h3>🔐 رمز عبور مدیریت</h3>
+            <input type="password" id="passwordInput" placeholder="رمز عبور را وارد کنید">
+            <br>
+            <button class="btn" onclick="checkPassword()">ورود</button>
+            <button class="btn btn-outline" onclick="closePassword()">انصراف</button>
+        </div>
+    </div>
+
+    <!-- پنل مدیریت -->
+    <div class="admin-overlay" id="adminOverlay">
+        <div class="admin-panel">
+            <button class="close-btn" onclick="closeAdmin()">✕</button>
+            <h3 style="text-align:center; color:var(--gold); margin-bottom:20px;">📊 پنل مدیریت سفارش‌ها</h3>
+            <button class="btn" onclick="refreshOrders()" style="width:100%; margin-bottom:15px;">🔄 بروزرسانی</button>
+            <button class="btn" onclick="clearOrders()" style="width:100%; background:#e74c3c; color:white;">🗑️ پاک کردن همه</button>
+            <div id="ordersList" style="margin-top:20px;"><p style="text-align:center;">هنوز سفارشی ثبت نشده.</p></div>
+        </div>
+    </div>
+
+    <!-- هدر -->
+    <header>
+        <nav>
+            <div class="logo" id="logoClick">⚡ Fast<span>Web</span></div>
+            <div class="menu-dots" onclick="toggleMenu()">
+                ⋮
+                <div class="menu-dropdown" id="menuDropdown">
+                    <a href="#home">🏠 خانه</a>
+                    <a href="#portfolio">🎨 نمونه‌کارها</a>
+                    <a href="#order">📝 ثبت سفارش</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>سایتت رو <span>سریع، دقیق و قدرتمند</span> بساز</h1>
+            <p>⚡ FastWeb | از ۱۲ ساعت تا ۷۲ ساعت | با پشتیبانی حرفه‌ای</p>
+            <a href="#order" class="btn">🚀 ثبت سفارش</a>
+            <a href="#portfolio" class="btn btn-outline">🎨 نمونه‌کارها</a>
+        </div>
+    </section>
+
+    <section id="portfolio">
+        <h2 class="section-title" data-aos="fade-up">🎨 نمونه‌کارهای ما</h2>
+        <p class="section-subtitle" data-aos="fade-up">قالب‌های حرفه‌ای برای هر کسب‌وکار</p>
+        <div class="portfolio-grid">
+            <div class="portfolio-card" data-aos="zoom-in"><div class="portfolio-preview">☕</div><div class="portfolio-info"><h3>کافه و رستوران</h3><p>منو، رزرو، ربات بَریستا</p><span class="badge">پرفروش</span></div></div>
+            <div class="portfolio-card" data-aos="zoom-in"><div class="portfolio-preview">💇</div><div class="portfolio-info"><h3>آرایشگاه</h3><p>نوبت‌دهی، گالری</p><span class="badge">جدید</span></div></div>
+            <div class="portfolio-card" data-aos="zoom-in"><div class="portfolio-preview">🩺</div><div class="portfolio-info"><h3>مطب و کلینیک</h3><p>نوبت‌دهی آنلاین</p><span class="badge">محبوب</span></div></div>
+            <div class="portfolio-card" data-aos="zoom-in"><div class="portfolio-preview">👤</div><div class="portfolio-info"><h3>رزومه آنلاین</h3><p>صفحه شخصی حرفه‌ای</p></div></div>
+            <div class="portfolio-card" data-aos="zoom-in"><div class="portfolio-preview">🔧</div><div class="portfolio-info"><h3>خدمات فنی</h3><p>معرفی خدمات</p></div></div>
+            <div class="portfolio-card" data-aos="zoom-in"><div class="portfolio-preview">🛒</div><div class="portfolio-info"><h3>فروشگاهی</h3><p>سبد خرید و درگاه</p><span class="badge">ویژه</span></div></div>
+        </div>
+    </section>
+
+    <section id="order">
+        <h2 class="section-title" data-aos="fade-up">📝 ثبت سفارش</h2>
+        <p class="section-subtitle" data-aos="fade-up">قدم‌به‌قدم جلو برو</p>
+        <form class="step-form" data-aos="fade-up" id="orderForm" onsubmit="submitOrder(event)">
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot1"></div><div class="step-dot" id="dot2"></div><div class="step-dot" id="dot3"></div>
+                <div class="step-dot" id="dot4"></div><div class="step-dot" id="dot5"></div><div class="step-dot" id="dot6"></div><div class="step-dot" id="dot7"></div>
+            </div>
+            <div class="step active" id="step1">
+                <h3 style="text-align:center; color:var(--gold);">👤 قدم اول: اطلاعات شما</h3>
+                <div class="form-group"><label>نام و نام خانوادگی</label><input type="text" id="customerName" placeholder="نام کامل" required></div>
+                <div class="form-group"><label>شماره تماس</label><input type="tel" id="customerPhone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required></div>
+                <div class="form-group"><label>نوع کسب‌وکار</label><select id="businessType"><option value="">انتخاب کنید</option><option>کافه و رستوران</option><option>آرایشگاه</option><option>مطب و دندانپزشکی</option><option>خدمات فنی و مکانیکی</option><option>فروشگاهی</option><option>شخصی</option></select></div>
+                <div class="nav-buttons"><div></div><button type="button" class="btn" onclick="nextStep(2)">بعدی ←</button></div>
+            </div>
+            <div class="step" id="step2">
+                <h3 style="text-align:center; color:var(--gold);">🎨 قدم دوم: رنگ‌های سایت (۱ تا ۳ رنگ)</h3>
+                <div class="color-grid" id="colorGrid"></div>
+                <input type="hidden" id="selectedColors" value='["#D4AF37"]'>
+                <div class="selected-colors-display" id="selectedColorsDisplay"></div>
+                <div class="nav-buttons"><button type="button" class="btn btn-outline" onclick="prevStep(1)">→ قبلی</button><button type="button" class="btn" onclick="nextStep(3)">بعدی ←</button></div>
+            </div>
+            <div class="step" id="step3">
+                <h3 style="text-align:center; color:var(--gold);">🔤 قدم سوم: فونت</h3>
+                <div class="form-group"><select id="fontSelect"><option>وزیر (مدرن)</option><option>صمیم (گرم)</option><option>شبنم (شیک)</option><option>ساحل (مینیمال)</option></select></div>
+                <div class="nav-buttons"><button type="button" class="btn btn-outline" onclick="prevStep(2)">→ قبلی</button><button type="button" class="btn" onclick="nextStep(4)">بعدی ←</button></div>
+            </div>
+            <div class="step" id="step4">
+                <h3 style="text-align:center; color:var(--gold);">🤖 قدم چهارم: کاراکتر</h3>
+                <div class="character-options">
+                    <div class="character-card" onclick="selectCharacter('none', this)"><div class="character-emoji">❌</div><div class="character-name">بدون</div></div>
+                    <div class="character-card" onclick="selectCharacter('barista', this)"><div class="character-emoji">☕</div><div class="character-name">بَریستا</div></div>
+                    <div class="character-card" onclick="selectCharacter('tooth', this)"><div class="character-emoji">🦷</div><div class="character-name">دندونی</div></div>
+                    <div class="character-card" onclick="selectCharacter('wrench', this)"><div class="character-emoji">🔧</div><div class="character-name">آچاری</div></div>
+                    <div class="character-card" onclick="selectCharacter('barista-sound', this)"><div class="character-emoji">🔊</div><div class="character-name">بَریستا+صدا<br><small>(+۵۰۰هزار)</small></div></div>
+                    <div class="character-card" onclick="selectCharacter('custom', this)"><div class="character-emoji">✨</div><div class="character-name">سفارشی<br><small>(+۱میلیون)</small></div></div>
+                </div>
+                <input type="hidden" id="selectedCharacter" value="none">
+                <div id="customCharDiv" style="display:none; margin-top:15px;"><label>توضیح کاراکتر:</label><textarea id="customCharDesc" rows="2"></textarea></div>
+                <div class="nav-buttons"><button type="button" class="btn btn-outline" onclick="prevStep(3)">→ قبلی</button><button type="button" class="btn" onclick="nextStep(5)">بعدی ←</button></div>
+            </div>
+            <div class="step" id="step5">
+                <h3 style="text-align:center; color:var(--gold);">🛒 قدم پنجم: فروشگاه</h3>
+                <div class="form-group"><select id="shopSelect" onchange="updatePrice()"><option value="none">فقط معرفی</option><option value="cart">سبد خرید + درگاه (+۲میلیون)</option></select></div>
+                <div class="nav-buttons"><button type="button" class="btn btn-outline" onclick="prevStep(4)">→ قبلی</button><button type="button" class="btn" onclick="nextStep(6)">بعدی ←</button></div>
+            </div>
+            <div class="step" id="step6">
+                <h3 style="text-align:center; color:var(--gold);">⚡ قدم ششم: زمان تحویل</h3>
+                <div class="form-group"><select id="deliverySelect" onchange="updatePrice()"><option value="72">اقتصادی (۷۲h) - ۳روز - ۲میلیون</option><option value="48">استاندارد (۴۸h) - ۷روز - ۳میلیون</option><option value="24">فوری (۲۴h) - ۱۴روز - ۴.۵میلیون</option><option value="12">ویژه (۱۲h) - ۳۰روز - ۶میلیون</option></select></div>
+                <div class="nav-buttons"><button type="button" class="btn btn-outline" onclick="prevStep(5)">→ قبلی</button><button type="button" class="btn" onclick="nextStep(7)">بعدی ←</button></div>
+            </div>
+            <div class="step" id="step7">
+                <h3 style="text-align:center; color:var(--gold);">✅ قدم آخر: ثبت</h3>
+                <div class="form-group"><label>توضیحات</label><textarea id="extraNotes" rows="2"></textarea></div>
+                <div class="price-display">💰 قیمت نهایی: <span id="finalPrice" style="color:#fff;">۲,۰۰۰,۰۰۰</span> تومان</div>
+                <div class="nav-buttons"><button type="button" class="btn btn-outline" onclick="prevStep(6)">→ قبلی</button><button type="submit" class="btn">✅ ثبت نهایی</button></div>
+            </div>
+        </form>
+        <div class="thank-you-page" id="thankYouPage">
+            <div class="thank-you-icon">✅</div>
+            <h2>🎉 سفارش ثبت شد!</h2>
+            <p>تیم FastWeb تا زمان تحویل باهات تماس می‌گیره.</p>
+            <button class="btn" onclick="newOrder()" style="margin-top:25px;">📝 ثبت سفارش جدید</button>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section"><h4><i class="fas fa-info-circle"></i> درباره</h4><p>⚡ FastWeb | سریع، دقیق، قدرتمند</p></div>
+            <div class="footer-section"><h4><i class="fas fa-phone"></i> تماس</h4><p>۰۹۱۷۸۵۶۶۱۱۸</p><p>پشتیبانی ۲۴ ساعته</p></div>
+            <div class="footer-section"><h4><i class="fas fa-map-marker-alt"></i> آدرس</h4><p>شیراز، بلوار بعثت، مجتمع فناوری</p></div>
+        </div>
+        <div class="footer-bottom"><p>© ۱۴۰۳ FastWeb</p></div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: false });
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+        window.onload = function() {
+            if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+            buildColorGrid(); updatePrice(); updateSelectedColorsDisplay(); initFaster();
+        };
+
+        function toggleMenu() { document.getElementById('menuDropdown').classList.toggle('active'); }
+        document.addEventListener('click', e => { if (!e.target.closest('.menu-dots')) document.getElementById('menuDropdown').classList.remove('active'); });
+
+        // ========== کاراکتر فَستِر ==========
+        function playBeep() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(600, ctx.currentTime);
+            osc.frequency.linearRampToValueAtTime(900, ctx.currentTime + 0.15);
+            osc.frequency.linearRampToValueAtTime(400, ctx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.35);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.35);
+        }
+
+        const fasterMessages = [
+            '👋 سلام! من فَستِر هستم، دستیار FastWeb!',
+            '📝 می‌خوای سفارش بدی؟ برو بخش ثبت سفارش!',
+            '🎨 می‌تونی رنگ سایتت رو خودت انتخاب کنی!',
+            '⚡ ما سایتت رو از ۱۲ ساعت تا ۷۲ ساعت می‌سازیم!',
+            '💰 قیمت‌ها از ۲ میلیون شروع می‌شه!',
+            '📞 سوالی داری؟ با ۰۹۱۷۸۵۶۶۱۱۸ تماس بگیر!',
+            '🤖 من اینجام تا کمکت کنم!',
+            '🌟 کاراکتر اختصاصی هم می‌تونی سفارش بدی!'
+        ];
+
+        function initFaster() {
+            const faster = document.getElementById('faster');
+            const speech = document.getElementById('fasterSpeech');
+
+            // حرکت تصادفی
+            function moveRandomly() {
+                const maxX = window.innerWidth - 100;
+                const maxY = window.innerHeight - 150;
+                const x = Math.random() * maxX;
+                const y = Math.random() * maxY;
+                faster.style.left = x + 'px';
+                faster.style.top = y + 'px';
+            }
+
+            // حرکت اولیه
+            faster.style.left = '20px';
+            faster.style.top = (window.innerHeight - 200) + 'px';
+
+            // هر ۸ ثانیه یه جا بره
+            setInterval(moveRandomly, 8000);
+
+            // کلیک روش
+            faster.addEventListener('click', function() {
+                const msg = fasterMessages[Math.floor(Math.random() * fasterMessages.length)];
+                speech.textContent = msg;
+                speech.classList.add('show');
+                playBeep();
+                setTimeout(() => speech.classList.remove('show'), 3000);
+            });
+
+            // پیغام اولیه
+            setTimeout(() => {
+                speech.textContent = '👋 سلام! من فَستِر هستم!';
+                speech.classList.add('show');
+                setTimeout(() => speech.classList.remove('show'), 3000);
+            }, 2000);
+        }
+
+        // ========== رنگ‌ها ==========
+        const allColors = ['#D4AF37','#e74c3c','#2ecc71','#3498db','#f39c12','#1abc9c','#e91e63','#3e2723','#9b59b6','#34495e','#e67e22','#2c3e50','#c0392b','#16a085','#8e44ad','#d35400'];
+        let selectedColorsArray = ['#D4AF37'];
+        function buildColorGrid() {
+            document.getElementById('colorGrid').innerHTML = allColors.map(c =>
+                `<div class="color-option ${selectedColorsArray.includes(c)?'selected':''}" style="background:${c};" onclick="toggleColor('${c}',this)"></div>`
+            ).join('');
+        }
+        function toggleColor(c, el) {
+            if (selectedColorsArray.includes(c)) {
+                if (selectedColorsArray.length > 1) { selectedColorsArray = selectedColorsArray.filter(x => x !== c); el.classList.remove('selected'); }
+            } else {
+                if (selectedColorsArray.length < 3) { selectedColorsArray.push(c); el.classList.add('selected'); }
+                else alert('حداکثر ۳ رنگ!');
+            }
+            document.getElementById('selectedColors').value = JSON.stringify(selectedColorsArray);
+            updateSelectedColorsDisplay();
+        }
+        function updateSelectedColorsDisplay() {
+            document.getElementById('selectedColorsDisplay').innerHTML = selectedColorsArray.map(c =>
+                `<span class="selected-color-tag" style="background:${c};">${c} <span onclick="removeColor('${c}')">&times;</span></span>`
+            ).join('');
+        }
+        function removeColor(c) {
+            if (selectedColorsArray.length > 1) { selectedColorsArray = selectedColorsArray.filter(x => x !== c); document.getElementById('selectedColors').value = JSON.stringify(selectedColorsArray); buildColorGrid(); updateSelectedColorsDisplay(); }
+        }
+
+        function selectCharacter(t, el) {
+            document.querySelectorAll('.character-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('selectedCharacter').value = t;
+            document.getElementById('customCharDiv').style.display = t === 'custom' ? 'block' : 'none';
+            updatePrice();
+        }
+
+        function showStep(n) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step'+n).classList.add('active');
+            for (let i=1;i<=7;i++) document.getElementById('dot'+i).classList.remove('active');
+            document.getElementById('dot'+n).classList.add('active');
+        }
+        function nextStep(n) { showStep(n); scrollTo('#order'); }
+        function prevStep(n) { showStep(n); scrollTo('#order'); }
+        function scrollTo(id) { const el = document.querySelector(id); if(el) window.scrollTo({ top: el.offsetTop - 100, behavior: 'smooth' }); }
+
+        function updatePrice() {
+            let p = 0;
+            const d = document.getElementById('deliverySelect').value;
+            if (d === '72') p = 2000000; else if (d === '48') p = 3000000; else if (d === '24') p = 4500000; else if (d === '12') p = 6000000;
+            if (document.getElementById('selectedCharacter').value === 'barista-sound') p += 500000;
+            if (document.getElementById('selectedCharacter').value === 'custom') p += 1000000;
+            if (document.getElementById('shopSelect').value === 'cart') p += 2000000;
+            document.getElementById('finalPrice').textContent = p.toLocaleString('fa-IR');
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            const order = {
+                id: Date.now(), name: document.getElementById('customerName').value,
+                phone: document.getElementById('customerPhone').value,
+                businessType: document.getElementById('businessType').value,
+                colors: JSON.parse(document.getElementById('selectedColors').value),
+                font: document.getElementById('fontSelect').value,
+                character: document.getElementById('selectedCharacter').value,
+                characterDesc: document.getElementById('customCharDesc').value,
+                shop: document.getElementById('shopSelect').value,
+                delivery: document.getElementById('deliverySelect').value,
+                notes: document.getElementById('extraNotes').value,
+                price: document.getElementById('finalPrice').textContent,
+                status: 'pending', priority: document.getElementById('deliverySelect').value === '12' ? 'high' : 'medium',
+                date: new Date().toLocaleString('fa-IR')
+            };
+            let orders = JSON.parse(localStorage.getItem('fastwebOrders')) || [];
+            orders.push(order);
+            localStorage.setItem('fastwebOrders', JSON.stringify(orders));
+            document.getElementById('orderForm').style.display = 'none';
+            document.getElementById('thankYouPage').classList.add('active');
+            scrollTo('#thankYouPage');
+        }
+
+        function newOrder() {
+            document.getElementById('orderForm').style.display = 'block';
+            document.getElementById('thankYouPage').classList.remove('active');
+            document.getElementById('orderForm').reset();
+            selectedColorsArray = ['#D4AF37'];
+            document.getElementById('selectedColors').value = JSON.stringify(selectedColorsArray);
+            buildColorGrid(); updateSelectedColorsDisplay(); showStep(1); updatePrice();
+            scrollTo('#order');
+        }
+
+        let clicks = 0;
+        document.getElementById('logoClick').onclick = function() {
+            clicks++; if (clicks >= 3) { clicks = 0; document.getElementById('passwordOverlay').classList.add('active'); }
+            setTimeout(() => clicks = 0, 2000);
+        };
+        function checkPassword() {
+            if (document.getElementById('passwordInput').value === 'admin123') {
+                document.getElementById('passwordOverlay').classList.remove('active');
+                document.getElementById('adminOverlay').classList.add('active');
+                document.getElementById('passwordInput').value = ''; refreshOrders();
+            } else alert('❌ رمز اشتباه!');
+        }
+        function closePassword() { document.getElementById('passwordOverlay').classList.remove('active'); }
+        function closeAdmin() { document.getElementById('adminOverlay').classList.remove('active'); }
+        function refreshOrders() {
+            let orders = JSON.parse(localStorage.getItem('fastwebOrders')) || [];
+            const l = document.getElementById('ordersList');
+            if (!orders.length) { l.innerHTML = '<p style="text-align:center;">هنوز سفارشی ثبت نشده.</p>'; return; }
+            l.innerHTML = orders.map(o => `
+                <div class="order-card priority-${o.priority}">
+                    <strong>#${o.id.toString().slice(-6)} | ${o.name}</strong> | ${o.phone}<br>
+                    ${o.businessType} | ${Array.isArray(o.colors)?o.colors.join('+'):o.colors}<br>
+                    🤖${o.character} 🛒${o.shop==='cart'?'دارد':'ندارد'} ⚡${o.delivery}h 💰${o.price}<br>
+                    ${o.notes?'📝'+o.notes+'<br>':''}
+                    <button class="btn" style="padding:5px 12px;font-size:11px;" onclick="updateStatus(${o.id},'done')">✅ تکمیل</button>
+                    <button class="btn" style="padding:5px 12px;font-size:11px;background:#e74c3c;color:white;" onclick="deleteOrder(${o.id})">🗑️</button>
+                </div>
+            `).join('');
+        }
+        function updateStatus(id,s) { let o=JSON.parse(localStorage.getItem('fastwebOrders'))||[]; const i=o.findIndex(x=>x.id===id); if(i!==-1){o[i].status=s; localStorage.setItem('fastwebOrders',JSON.stringify(o)); refreshOrders();} }
+        function deleteOrder(id) { if(confirm('حذف؟')){ let o=JSON.parse(localStorage.getItem('fastwebOrders'))||[]; o=o.filter(x=>x.id!==id); localStorage.setItem('fastwebOrders',JSON.stringify(o)); refreshOrders(); } }
+        function clearOrders() { if(confirm('همه پاک بشن؟')){ localStorage.removeItem('fastwebOrders'); refreshOrders(); } }
+    </script>
+</body>
+</html>
