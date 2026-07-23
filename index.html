@@ -1,1 +1,781 @@
-<meta http-equiv="refresh" content="0; url=fastweb.html">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastWeb | سریع، دقیق، قدرتمند</title>
+    <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg: #fafafa; --text: #1a1a1a; --gold: #D4AF37;
+            --dark: #0d0d0d; --card: #fff; --shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        .dark-mode { --bg: #0a0a0a; --text: #f0f0f0; --card: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', sans-serif; background: var(--bg);
+            color: var(--text); min-height: 100vh; padding-bottom: 100px;
+        }
+
+        /* هدر */
+        .header {
+            background: #0d0d0d; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 999; border-bottom: 2px solid var(--gold);
+        }
+        .logo { font-size: 26px; font-weight: 900; color: var(--gold); cursor: pointer; }
+        .header-icons { display: flex; gap: 20px; }
+        .header-icons span { color: var(--gold); font-size: 22px; cursor: pointer; position: relative; }
+        .cart-count {
+            position: absolute; top: -8px; right: -10px; background: #e74c3c;
+            color: #fff; font-size: 10px; width: 18px; height: 18px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+        }
+
+        /* نوار پایین */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #0d0d0d;
+            display: flex; justify-content: space-around; padding: 10px 0;
+            border-top: 2px solid var(--gold); z-index: 999;
+        }
+        .bottom-nav .nav-item {
+            text-align: center; color: #aaa; cursor: pointer; transition: 0.3s;
+            font-size: 10px; flex: 1;
+        }
+        .bottom-nav .nav-item i { font-size: 20px; display: block; margin-bottom: 3px; }
+        .bottom-nav .nav-item.active, .bottom-nav .nav-item:hover { color: var(--gold); }
+
+        /* صفحات */
+        .page { display: none; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* کارت محصول */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .product-card {
+            background: var(--card); border-radius: 18px; overflow: hidden;
+            box-shadow: var(--shadow); transition: 0.3s; border: 1px solid #eee;
+        }
+        .product-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+        .product-img {
+            height: 180px; background: linear-gradient(135deg, #1a1a1a, #333);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 60px; color: var(--gold);
+        }
+        .product-info { padding: 15px; }
+        .product-info h4 { font-size: 16px; margin-bottom: 5px; }
+        .product-info p { font-size: 12px; color: #888; margin-bottom: 8px; }
+        .product-price { color: var(--gold); font-weight: 900; font-size: 16px; }
+        .btn {
+            display: inline-block; padding: 10px 22px; background: var(--gold);
+            color: #0d0d0d; border: none; border-radius: 25px; font-weight: 700;
+            cursor: pointer; font-family: 'Vazir', sans-serif; font-size: 13px;
+            transition: 0.3s; margin-top: 8px; text-decoration: none;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-red { background: #e74c3c; color: #fff; }
+        .btn-green { background: #2ecc71; color: #fff; }
+
+        /* منوی درختی */
+        .tree-menu { list-style: none; padding: 0; }
+        .tree-menu li { margin: 5px 0; }
+        .tree-menu .parent {
+            font-weight: 700; color: var(--gold); cursor: pointer;
+            padding: 10px; border-radius: 10px; background: rgba(212,175,55,0.05);
+        }
+        .tree-menu .children { display: none; padding-right: 20px; }
+        .tree-menu .children.show { display: block; }
+        .tree-menu .children li {
+            padding: 8px; cursor: pointer; border-radius: 8px; font-size: 14px;
+        }
+        .tree-menu .children li:hover { background: rgba(212,175,55,0.1); }
+
+        /* مودال */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: #1a1a1a; border-radius: 20px; padding: 25px; width: 90%; max-width: 500px;
+            max-height: 80vh; overflow-y: auto; color: #fff; border: 2px solid var(--gold);
+            position: relative;
+        }
+        .modal h3 { color: var(--gold); margin-bottom: 15px; text-align: center; }
+        .modal input, .modal select, .modal textarea {
+            width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px;
+            border: 1px solid rgba(212,175,55,0.3); background: #111; color: #fff;
+            font-family: 'Vazir', sans-serif;
+        }
+        .modal .close-btn {
+            position: absolute; top: 10px; right: 15px; background: none;
+            border: none; color: var(--gold); font-size: 22px; cursor: pointer;
+        }
+
+        /* داشبورد */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .stat-card {
+            background: #1a1a1a; padding: 20px; border-radius: 15px; text-align: center;
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+        .stat-number { font-size: 28px; font-weight: 900; color: var(--gold); }
+        .stat-label { font-size: 12px; color: #aaa; }
+        .stat-icon { font-size: 30px; display: block; margin-bottom: 5px; }
+
+        /* لیست سفارشات */
+        .order-list { max-height: 400px; overflow-y: auto; }
+        .order-item {
+            background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 10px;
+            border-right: 4px solid var(--gold);
+        }
+        .filter-btns { display: flex; gap: 8px; margin-bottom: 15px; }
+        .filter-btns button {
+            flex: 1; padding: 8px; border: 1px solid var(--gold); background: transparent;
+            color: var(--gold); border-radius: 20px; cursor: pointer; font-family: 'Vazir', sans-serif; font-size: 12px;
+        }
+        .filter-btns button.active { background: var(--gold); color: #0d0d0d; }
+
+        /* چت */
+        .chat-box { max-height: 300px; overflow-y: auto; margin-bottom: 10px; }
+        .chat-msg { padding: 10px; border-radius: 12px; margin: 5px 0; font-size: 13px; }
+        .chat-msg.user { background: #333; text-align: right; }
+        .chat-msg.admin { background: rgba(212,175,55,0.2); text-align: left; }
+
+        /* رادیو باتن برای دسته‌بندی */
+        .radio-group { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+        .radio-group label {
+            padding: 8px 15px; border-radius: 20px; border: 1px solid var(--gold);
+            cursor: pointer; color: var(--gold); font-size: 13px; transition: 0.3s;
+        }
+        .radio-group label.active { background: var(--gold); color: #0d0d0d; }
+        .radio-group input { display: none; }
+
+        @media (max-width: 600px) {
+            .product-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- هدر -->
+    <div class="header">
+        <div class="logo" onclick="openAdmin()">⚡ FastWeb</div>
+        <div class="header-icons">
+            <span onclick="openSearch()"><i class="fas fa-search"></i></span>
+            <span onclick="openCart()">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- ========== بخش اصلی سایت ========== -->
+    <div id="mainSite">
+        <div id="pageDesign" class="page active">
+            <h2 style="color:var(--gold); text-align:center; margin-bottom:20px;">🌐 طراحی سایت</h2>
+            <div class="tree-menu">
+                <li class="parent" onclick="toggleTree(this)">📦 قالب‌های آماده</li>
+                <ul class="children">
+                    <li onclick="showCategory('فروشگاهی')">🛒 فروشگاهی</li>
+                    <li onclick="showCategory('رزومه')">👤 رزومه آنلاین</li>
+                    <li onclick="showCategory('مطب')">🩺 مطب و کلینیک</li>
+                    <li onclick="showCategory('آرایشگاه')">💇 آرایشگاه و سالن</li>
+                    <li onclick="showCategory('کافه')">☕ کافه و رستوران</li>
+                    <li onclick="showCategory('باشگاه')">🏋️ باشگاه ورزشی</li>
+                    <li onclick="showCategory('املاک')">🏠 املاک و مشاورین</li>
+                </ul>
+                <li class="parent" onclick="openCustomDesign()">🎨 طراحی سایت شخصی‌سازی شده</li>
+            </div>
+            <div id="categoryProducts" class="product-grid" style="margin-top:20px;"></div>
+            <div id="popularProducts" class="product-grid" style="margin-top:30px;">
+                <h4 style="width:100%; color:var(--gold);">🔥 پرفروش‌ترین قالب‌ها</h4>
+            </div>
+        </div>
+
+        <div id="pageTools" class="page">
+            <h2 style="color:var(--gold); text-align:center; margin-bottom:20px;">🧮 ابزارهای کاربردی</h2>
+            <div class="tree-menu">
+                <li class="parent" onclick="toggleTree(this)">💰 ابزارهای مالی و محاسباتی</li>
+                <ul class="children">
+                    <li onclick="showTool('ماشین حساب مهندسی')">🧮 ماشین حساب مهندسی</li>
+                    <li onclick="showTool('تبدیل ارز')">💱 تبدیل ارز</li>
+                    <li onclick="showTool('فاکتورساز')">🧾 فاکتورساز حرفه‌ای</li>
+                    <li onclick="showTool('حسابداری')">💰 سیستم حسابداری ساده</li>
+                </ul>
+                <li class="parent" onclick="toggleTree(this)">📁 ابزارهای فایل و اسناد</li>
+                <ul class="children">
+                    <li onclick="showTool('امضا ساز')">✍️ امضا ساز دیجیتال</li>
+                    <li onclick="showTool('کم حجم کننده')">🗜️ کم‌حجم‌کننده عکس و ویدیو</li>
+                    <li onclick="showTool('متن به صوت')">🎙️ تبدیل متن به صوت و صوت به متن</li>
+                    <li onclick="showTool('ربات دانلودر')">🤖 ربات تلگرام دانلودر اینستاگرام</li>
+                </ul>
+                <li class="parent" onclick="toggleTree(this)">📋 ابزارهای مدیریتی و اداری</li>
+                <ul class="children">
+                    <li onclick="showTool('نظرسنجی')">🗳️ نظرسنجی و آزمون</li>
+                    <li onclick="showTool('فرم ساز')">📝 فرم‌ساز حرفه‌ای</li>
+                    <li onclick="showTool('نوبت دهی')">📅 سیستم نوبت‌دهی</li>
+                    <li onclick="showTool('CRM')">📋 مدیریت مشتریان CRM</li>
+                </ul>
+                <li class="parent" onclick="toggleTree(this)">🎨 ابزارهای خلاقانه</li>
+                <ul class="children">
+                    <li onclick="showTool('رمزساز')">🔐 رمزساز قوی</li>
+                    <li onclick="showTool('کوتاه کننده لینک')">🔗 کوتاه‌کننده لینک</li>
+                    <li onclick="showTool('قرعه کشی')">🎯 انتخاب تصادفی (قرعه‌کشی)</li>
+                </ul>
+            </div>
+            <div id="toolProducts" class="product-grid" style="margin-top:20px;"></div>
+        </div>
+
+        <div id="pageCard" class="page">
+            <h2 style="color:var(--gold); text-align:center; margin-bottom:15px;">📇 کارت ویزیت هوشمند</h2>
+            <div id="cardIntro" style="text-align:center; padding:20px; background:#1a1a1a; border-radius:15px; color:#fff; margin-bottom:20px; border:1px solid var(--gold);">
+                <p>👋 سلام کاربر گرامی</p>
+                <p style="font-size:14px; margin-top:10px;">کارت ویزیت هوشمند، کارت شخصی کسب‌وکار شماست.</p>
+                <p style="font-size:13px; color:#aaa;">شامل: لینک‌های مهم، شماره تماس، ایمیل، موقعیت مکانی، اطلاعات هویتی، عکس پروفایل، برند و شعار کسب‌وکار شما</p>
+                <button class="btn" onclick="closeCardIntro()" style="margin-top:15px;">متوجه شدم ✓</button>
+            </div>
+            <div id="cardSamples" class="product-grid"></div>
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn" onclick="openCardOrder()">📝 ثبت سفارش کارت ویزیت</button>
+            </div>
+        </div>
+
+        <div id="pageSupport" class="page">
+            <h2 style="color:var(--gold); text-align:center; margin-bottom:20px;">💬 پشتیبانی</h2>
+            <div style="display:flex; flex-direction:column; gap:15px;">
+                <button class="btn" onclick="openTicket()" style="width:100%; padding:15px;">📝 ثبت درخواست</button>
+                <button class="btn" onclick="openTicketTracking()" style="width:100%; padding:15px;">🔍 پیگیری درخواست‌ها</button>
+                <a href="tel:09178566118" class="btn" style="width:100%; padding:15px; text-align:center; display:block;">📞 تماس مستقیم با پشتیبانی</a>
+            </div>
+        </div>
+
+        <!-- نوار پایین اصلی -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchPage('pageDesign', this)"><i class="fas fa-globe"></i>طراحی سایت</div>
+            <div class="nav-item" onclick="switchPage('pageTools', this)"><i class="fas fa-tools"></i>ابزارها</div>
+            <div class="nav-item" onclick="switchPage('pageCard', this)"><i class="fas fa-id-card"></i>کارت ویزیت</div>
+            <div class="nav-item" onclick="switchPage('pageSupport', this)"><i class="fas fa-headset"></i>پشتیبانی</div>
+        </div>
+    </div>
+
+    <!-- ========== پنل مدیریت ========== -->
+    <div id="adminPanel" style="display:none;">
+        <div class="header" style="background:#1a1a1a;">
+            <div style="color:var(--gold); font-weight:900;">📊 پنل مدیریت</div>
+            <button class="btn btn-red" onclick="closeAdmin()" style="padding:8px 16px; font-size:12px;">✕ خروج</button>
+        </div>
+
+        <div id="adminDashboard" class="page active" style="padding:20px;">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">📊 داشبورد اصلی</h3>
+            <div class="stats-grid">
+                <div class="stat-card"><span class="stat-icon">🚀</span><div class="stat-number" id="admTotalOrders">0</div><div class="stat-label">کل سفارش‌ها</div></div>
+                <div class="stat-card"><span class="stat-icon">👁️</span><div class="stat-number" id="admTotalVisits">0</div><div class="stat-label">بازدید سایت</div></div>
+            </div>
+            <div class="stats-grid" style="margin-top:15px; grid-template-columns: 1fr 1fr 1fr;">
+                <div class="stat-card"><div class="stat-number" id="admTodayIncome">۰</div><div class="stat-label">💰 امروز</div></div>
+                <div class="stat-card"><div class="stat-number" id="admWeekIncome">۰</div><div class="stat-label">💰 این هفته</div></div>
+                <div class="stat-card"><div class="stat-number" id="admMonthIncome">۰</div><div class="stat-label">💰 این ماه</div></div>
+            </div>
+        </div>
+
+        <div id="adminOrders" class="page" style="padding:20px;">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:15px;">📦 مدیریت سفارش‌ها</h3>
+            <div class="filter-btns">
+                <button class="active" onclick="filterOrders('all', this)">همه</button>
+                <button onclick="filterOrders('today', this)">امروز</button>
+                <button onclick="filterOrders('week', this)">هفته اخیر</button>
+                <button onclick="filterOrders('month', this)">ماه اخیر</button>
+            </div>
+            <div class="order-list" id="adminOrderList"></div>
+        </div>
+
+        <div id="adminCustomers" class="page" style="padding:20px;">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:15px;">👥 مدیریت مشتریان</h3>
+            <div class="order-list" id="adminCustomerList"></div>
+        </div>
+
+        <div id="adminProducts" class="page" style="padding:20px;">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:15px;">📦 مدیریت محصولات</h3>
+            <button class="btn btn-green" onclick="addProduct()" style="margin-bottom:15px;">➕ افزودن محصول</button>
+            <div class="order-list" id="adminProductList"></div>
+        </div>
+
+        <div id="adminSupport" class="page" style="padding:20px;">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:15px;">💬 پشتیبانی</h3>
+            <div class="order-list" id="adminTicketList"></div>
+        </div>
+
+        <!-- نوار پایین پنل مدیریت -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchAdminPage('adminDashboard', this)"><i class="fas fa-tachometer-alt"></i>داشبورد</div>
+            <div class="nav-item" onclick="switchAdminPage('adminOrders', this)"><i class="fas fa-shopping-bag"></i>سفارش‌ها</div>
+            <div class="nav-item" onclick="switchAdminPage('adminCustomers', this)"><i class="fas fa-users"></i>مشتریان</div>
+            <div class="nav-item" onclick="switchAdminPage('adminProducts', this)"><i class="fas fa-boxes"></i>محصولات</div>
+            <div class="nav-item" onclick="switchAdminPage('adminSupport', this)"><i class="fas fa-headset"></i>پشتیبانی</div>
+        </div>
+    </div>
+
+    <!-- مودال -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <script>
+        // ========== متغیرهای سراسری ==========
+        let cart = JSON.parse(localStorage.getItem('fastwebCart')) || [];
+        let orders = JSON.parse(localStorage.getItem('fastwebOrders')) || [];
+        let tickets = JSON.parse(localStorage.getItem('fastwebTickets')) || [];
+        let customers = JSON.parse(localStorage.getItem('fastwebCustomers')) || [];
+        let products = JSON.parse(localStorage.getItem('fastwebProducts')) || [];
+
+        if (products.length === 0) {
+            products = [
+                { id: 1, cat: 'کافه', name: 'قالب کافه بُن', price: '۱,۵۰۰,۰۰۰', desc: 'منو، رزرو، پنل مدیریت، حالت شب', img: '☕', link: 'https://cafe-bon.tiiny.site' },
+                { id: 2, cat: 'آرایشگاه', name: 'قالب سالن زیبایی', price: '۱,۵۰۰,۰۰۰', desc: 'نوبت‌دهی، گالری، نظرات', img: '💇', link: '' },
+                { id: 3, cat: 'مطب', name: 'قالب مطب دکتر', price: '۱,۵۰۰,۰۰۰', desc: 'نوبت‌دهی، پروفایل دکتر', img: '🩺', link: '' },
+                { id: 4, cat: 'فروشگاهی', name: 'قالب فروشگاهی', price: '۱,۵۰۰,۰۰۰', desc: 'سبد خرید، درگاه پرداخت', img: '🛒', link: '' },
+                { id: 5, cat: 'املاک', name: 'قالب مشاور املاک', price: '۱,۵۰۰,۰۰۰', desc: 'لیست املاک، جستجو', img: '🏠', link: '' },
+                { id: 6, cat: 'باشگاه', name: 'قالب باشگاه', price: '۱,۵۰۰,۰۰۰', desc: 'برنامه تمرین، مربیان', img: '🏋️', link: '' },
+                { id: 7, cat: 'رزومه', name: 'رزومه آنلاین', price: '۱,۵۰۰,۰۰۰', desc: 'صفحه شخصی حرفه‌ای', img: '👤', link: '' },
+                { id: 8, cat: 'کارت', name: 'کلیک کارت ساده', price: '۲۹,۰۰۰', desc: 'کارت ویزیت هوشمند', img: '📇', link: '' },
+                { id: 9, cat: 'کارت', name: 'کلیک کارت حرفه‌ای', price: '۴۹,۰۰۰', desc: 'با QR کد و تم طلایی', img: '💎', link: '' },
+            ];
+            localStorage.setItem('fastwebProducts', JSON.stringify(products));
+        }
+
+        // ========== توابع اصلی سایت ==========
+        function switchPage(pageId, navItem) {
+            document.querySelectorAll('#mainSite .page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('#mainSite .nav-item').forEach(n => n.classList.remove('active'));
+            if (navItem) navItem.classList.add('active');
+            updateCartCount();
+        }
+
+        function toggleTree(el) {
+            const children = el.nextElementSibling;
+            if (children && children.classList.contains('children')) {
+                children.classList.toggle('show');
+            }
+        }
+
+        function showCategory(cat) {
+            const filtered = products.filter(p => p.cat === cat);
+            document.getElementById('categoryProducts').innerHTML = filtered.map(p => productHTML(p)).join('');
+        }
+
+        function showTool(name) {
+            document.getElementById('toolProducts').innerHTML = `
+                <div class="product-card">
+                    <div class="product-img">🛠️</div>
+                    <div class="product-info">
+                        <h4>${name}</h4>
+                        <p>ابزار کاربردی FastWeb</p>
+                        <div class="product-price">تماس بگیرید</div>
+                        <button class="btn" onclick="addToCart({id:Date.now(),name:'${name}',price:'۰'})">🛒 ثبت سفارش</button>
+                    </div>
+                </div>`;
+        }
+
+        function productHTML(p) {
+            return `
+                <div class="product-card">
+                    <div class="product-img">${p.img}</div>
+                    <div class="product-info">
+                        <h4>${p.name}</h4>
+                        <p>${p.desc}</p>
+                        <div class="product-price">${p.price} تومان</div>
+                        ${p.link ? `<a href="${p.link}" target="_blank" class="btn" style="margin-left:5px;">👁️ دمو</a>` : ''}
+                        <button class="btn" onclick="openOrderModal('${p.name.replace(/'/g, "\\'")}', '${p.price}')">🛒 ثبت سفارش</button>
+                    </div>
+                </div>`;
+        }
+
+        function openOrderModal(name, price) {
+            let html = `<h3>🛒 ثبت سفارش</h3><p style="text-align:center;">${name} - ${price} تومان</p>`;
+            html += '<input type="text" placeholder="نام و نام خانوادگی" id="orderName">';
+            html += '<input type="tel" placeholder="شماره تماس" id="orderPhone">';
+            html += '<button class="btn btn-green" onclick="submitOrderModal()" style="width:100%;">✅ ارسال</button>';
+            showModal(html);
+        }
+
+        function submitOrderModal() {
+            const name = document.getElementById('orderName')?.value;
+            const phone = document.getElementById('orderPhone')?.value;
+            if (!name || !phone) { alert('لطفاً همه فیلدها را پر کنید'); return; }
+            cart.push({ id: Date.now(), name: 'سفارش جدید', price: '۰', customerName: name, customerPhone: phone });
+            localStorage.setItem('fastwebCart', JSON.stringify(cart));
+            closeModal();
+            updateCartCount();
+            alert('✅ به سبد خرید اضافه شد!');
+        }
+
+        function openCustomDesign() {
+            let html = '<h3>🎨 طراحی سایت شخصی‌سازی شده</h3>';
+            html += '<input type="text" placeholder="نام و نام خانوادگی" id="customName">';
+            html += '<input type="tel" placeholder="شماره تماس" id="customPhone">';
+            html += '<select id="customBusiness"><option>کافه و رستوران</option><option>آرایشگاه</option><option>مطب</option><option>فروشگاهی</option><option>خدمات فنی</option><option>سایر</option></select>';
+            html += '<button class="btn btn-green" onclick="submitCustom()" style="width:100%;">✅ ارسال</button>';
+            showModal(html);
+        }
+
+        function submitCustom() {
+            const name = document.getElementById('customName')?.value;
+            const phone = document.getElementById('customPhone')?.value;
+            if (!name || !phone) { alert('لطفاً همه فیلدها را پر کنید'); return; }
+            orders.push({ type: 'سفارشی', name, phone, date: new Date().toLocaleString('fa-IR'), status: 'جدید' });
+            localStorage.setItem('fastwebOrders', JSON.stringify(orders));
+            customers.push({ name, phone, date: new Date().toLocaleString('fa-IR'), orders: 1 });
+            localStorage.setItem('fastwebCustomers', JSON.stringify(customers));
+            closeModal();
+            showModal('<h3>✅ کارشناسان ما در اسرع وقت با شما تماس خواهند گرفت.</h3>');
+            setTimeout(closeModal, 10000);
+        }
+
+        function openCardOrder() {
+            let html = '<h3>📝 ثبت سفارش کارت ویزیت هوشمند</h3>';
+            html += '<input type="text" placeholder="نام و نام خانوادگی" id="cardName">';
+            html += '<input type="tel" placeholder="شماره تماس" id="cardPhone">';
+            html += '<button class="btn btn-green" onclick="submitCardOrder()" style="width:100%;">✅ ثبت سفارش</button>';
+            showModal(html);
+        }
+
+        function submitCardOrder() {
+            const name = document.getElementById('cardName')?.value;
+            const phone = document.getElementById('cardPhone')?.value;
+            if (!name || !phone) { alert('لطفاً همه فیلدها را پر کنید'); return; }
+            orders.push({ type: 'کارت ویزیت', name, phone, date: new Date().toLocaleString('fa-IR'), status: 'جدید' });
+            localStorage.setItem('fastwebOrders', JSON.stringify(orders));
+            customers.push({ name, phone, date: new Date().toLocaleString('fa-IR'), orders: 1 });
+            localStorage.setItem('fastwebCustomers', JSON.stringify(customers));
+            closeModal();
+            alert('✅ سفارش شما ثبت شد!');
+        }
+
+        function closeCardIntro() {
+            document.getElementById('cardIntro').style.display = 'none';
+            document.getElementById('cardSamples').innerHTML = products.filter(p => p.cat === 'کارت').map(p => productHTML(p)).join('');
+        }
+
+        function openTicket() {
+            let html = '<h3>📝 ثبت درخواست پشتیبانی</h3>';
+            html += '<input type="text" placeholder="نام و نام خانوادگی" id="ticketName">';
+            html += '<input type="tel" placeholder="شماره تماس" id="ticketPhone">';
+            html += '<textarea placeholder="توضیحات درخواست" id="ticketDesc" rows="3"></textarea>';
+            html += '<button class="btn btn-green" onclick="submitTicket()" style="width:100%;">✅ ارسال</button>';
+            showModal(html);
+        }
+
+        function submitTicket() {
+            const name = document.getElementById('ticketName')?.value;
+            const desc = document.getElementById('ticketDesc')?.value;
+            if (!name || !desc) { alert('لطفاً همه فیلدها را پر کنید'); return; }
+            tickets.push({ id: Date.now(), name, desc, status: 'در انتظار', date: new Date().toLocaleString('fa-IR'), replies: [], lastReply: null });
+            localStorage.setItem('fastwebTickets', JSON.stringify(tickets));
+            closeModal();
+            alert('✅ درخواست شما ثبت شد.');
+        }
+
+        function openTicketTracking() {
+            if (tickets.length === 0) { alert('هیچ درخواستی ثبت نشده'); return; }
+            let html = '<h3>🔍 پیگیری درخواست‌ها</h3>';
+            tickets.forEach((t, i) => {
+                html += `<div style="padding:10px;border-bottom:1px solid #333;">
+                    <strong>${t.name}</strong> - <span style="color:${t.status==='پاسخ داده شد'?'#2ecc71':'#f39c12'}">${t.status}</span>
+                    <p style="font-size:12px;">${t.desc}</p>
+                    ${t.replies && t.replies.length > 0 ? t.replies.map(r => `<p style="color:#2ecc71;font-size:12px;">پاسخ: ${r}</p>`).join('') : ''}
+                    ${t.status === 'پاسخ داده شد' ? `<button class="btn" onclick="replyToTicket(${i})" style="margin-top:5px;font-size:11px;">💬 پیام جدید</button>` : ''}
+                </div>`;
+            });
+            showModal(html);
+        }
+
+        function replyToTicket(index) {
+            let html = `<h3>💬 پیام به پشتیبانی</h3>`;
+            html += '<textarea placeholder="پیام شما..." id="ticketReply" rows="3"></textarea>';
+            html += `<button class="btn btn-green" onclick="sendTicketReply(${index})" style="width:100%;">📨 ارسال</button>`;
+            showModal(html);
+        }
+
+        function sendTicketReply(index) {
+            const reply = document.getElementById('ticketReply')?.value;
+            if (!reply) return;
+            if (!tickets[index].replies) tickets[index].replies = [];
+            tickets[index].replies.push(reply);
+            tickets[index].status = 'در انتظار';
+            tickets[index].lastReply = Date.now();
+            localStorage.setItem('fastwebTickets', JSON.stringify(tickets));
+            closeModal();
+            alert('✅ پیام شما ارسال شد.');
+        }
+
+        function addToCart(product) {
+            cart.push(product);
+            localStorage.setItem('fastwebCart', JSON.stringify(cart));
+            updateCartCount();
+            alert('✅ به سبد خرید اضافه شد!');
+        }
+
+        function updateCartCount() {
+            document.getElementById('cartCount').textContent = cart.length;
+        }
+
+        function openCart() {
+            if (cart.length === 0) { alert('🛒 سبد خرید خالی است'); return; }
+            let html = '<h3>🛒 سبد خرید</h3>';
+            let total = 0;
+            cart.forEach((item, i) => {
+                const price = parseInt(item.price?.replace(/[^0-9]/g, '')) || 0;
+                total += price;
+                html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #333;">
+                    <span>${item.name}</span>
+                    <span>${item.price} تومان</span>
+                    <div>
+                        <button onclick="removeFromCart(${i})" style="background:#e74c3c;color:#fff;border:none;border-radius:5px;cursor:pointer;padding:4px 8px;">✕</button>
+                    </div>
+                </div>`;
+            });
+            html += `<p style="margin-top:15px;text-align:center;font-size:18px;">💰 جمع کل: ${total.toLocaleString('fa-IR')} تومان</p>`;
+            html += `<button class="btn btn-green" onclick="checkout()" style="width:100%;margin-top:10px;">💳 نهایی کردن سفارش</button>`;
+            showModal(html);
+        }
+
+        function removeFromCart(i) {
+            cart.splice(i, 1);
+            localStorage.setItem('fastwebCart', JSON.stringify(cart));
+            updateCartCount();
+            openCart();
+        }
+
+        function checkout() {
+            orders.push({ items: [...cart], date: new Date().toLocaleString('fa-IR'), status: 'جدید' });
+            localStorage.setItem('fastwebOrders', JSON.stringify(orders));
+            cart.forEach(item => {
+                if (item.customerName) {
+                    customers.push({ name: item.customerName, phone: item.customerPhone, date: new Date().toLocaleString('fa-IR'), orders: 1 });
+                }
+            });
+            localStorage.setItem('fastwebCustomers', JSON.stringify(customers));
+            cart = [];
+            localStorage.setItem('fastwebCart', JSON.stringify(cart));
+            updateCartCount();
+            closeModal();
+            alert('✅ سفارش شما ثبت شد! کارشناسان ما با شما تماس می‌گیرند.');
+        }
+
+        function openSearch() {
+            let html = '<h3>🔍 جستجوی محصولات</h3>';
+            html += '<input type="text" placeholder="نام محصول را بنویسید..." id="searchInput" oninput="searchProducts()">';
+            html += '<div id="searchResults" style="margin-top:15px;"></div>';
+            showModal(html);
+        }
+
+        function searchProducts() {
+            const q = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+            const results = products.filter(p => p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q));
+            document.getElementById('searchResults').innerHTML = results.length === 0 ? '<p style="color:#aaa;">محصولی یافت نشد</p>' : results.map(p => productHTML(p)).join('');
+        }
+
+        // ========== پنل مدیریت ==========
+        let logoClicks = 0;
+        function openAdmin() {
+            logoClicks++;
+            if (logoClicks >= 3) {
+                logoClicks = 0;
+                const pass = prompt('🔐 رمز عبور مدیریت:');
+                if (pass === 'Sami1221') {
+                    document.getElementById('adminPanel').style.display = 'block';
+                    document.getElementById('mainSite').style.display = 'none';
+                    loadAdminDashboard();
+                    switchAdminPage('adminDashboard', document.querySelector('#adminPanel .nav-item'));
+                } else {
+                    alert('❌ رمز اشتباه!');
+                }
+            }
+            setTimeout(() => { logoClicks = 0; }, 2000);
+        }
+
+        function closeAdmin() {
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('mainSite').style.display = 'block';
+        }
+
+        function switchAdminPage(pageId, navItem) {
+            document.querySelectorAll('#adminPanel .page').forEach(p => p.classList.remove('active'));
+            const page = document.getElementById(pageId);
+            if (page) page.classList.add('active');
+            document.querySelectorAll('#adminPanel .nav-item').forEach(n => n.classList.remove('active'));
+            if (navItem) navItem.classList.add('active');
+            if (pageId === 'adminDashboard') loadAdminDashboard();
+            if (pageId === 'adminOrders') loadAdminOrders('all');
+            if (pageId === 'adminCustomers') loadAdminCustomers();
+            if (pageId === 'adminProducts') loadAdminProducts();
+            if (pageId === 'adminSupport') loadAdminTickets();
+        }
+
+        function loadAdminDashboard() {
+            document.getElementById('admTotalOrders').textContent = orders.length;
+            const visits = parseInt(localStorage.getItem('fastwebVisits') || 0) + 1;
+            localStorage.setItem('fastwebVisits', visits);
+            document.getElementById('admTotalVisits').textContent = visits;
+            document.getElementById('admTodayIncome').textContent = '۰ تومان';
+            document.getElementById('admWeekIncome').textContent = '۰ تومان';
+            document.getElementById('admMonthIncome').textContent = '۰ تومان';
+        }
+
+        function filterOrders(filter, btn) {
+            document.querySelectorAll('#adminOrders .filter-btns button').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            loadAdminOrders(filter);
+        }
+
+        function loadAdminOrders(filter = 'all') {
+            const now = new Date();
+            let filtered = orders;
+            if (filter === 'today') filtered = orders.filter(o => new Date(o.date).toDateString() === now.toDateString());
+            if (filter === 'week') filtered = orders.filter(o => new Date(o.date) >= new Date(now - 7 * 24 * 60 * 60 * 1000));
+            if (filter === 'month') filtered = orders.filter(o => new Date(o.date) >= new Date(now - 30 * 24 * 60 * 60 * 1000));
+            document.getElementById('adminOrderList').innerHTML = filtered.length === 0 ? '<p style="text-align:center;color:#aaa;">سفارشی یافت نشد</p>' :
+                filtered.map(o => `<div class="order-item"><strong>${o.name || o.type || 'سفارش'}</strong> | ${o.phone || ''}<br>📅 ${o.date} | وضعیت: ${o.status || 'جدید'}</div>`).join('');
+        }
+
+        function loadAdminCustomers() {
+            document.getElementById('adminCustomerList').innerHTML = customers.length === 0 ? '<p style="text-align:center;color:#aaa;">مشتری‌ای ثبت نشده</p>' :
+                customers.map(c => `<div class="order-item"><strong>${c.name}</strong> | 📞 ${c.phone}<br>📅 ${c.date} | 🛒 ${c.orders || 0} خرید</div>`).join('');
+        }
+
+        function loadAdminProducts() {
+            document.getElementById('adminProductList').innerHTML = products.map((p, i) => `
+                <div class="order-item" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span>${p.img} ${p.name} - ${p.price} تومان</span>
+                    <div>
+                        <button class="btn" onclick="editProduct(${i})" style="padding:6px 12px;font-size:11px;">✏️</button>
+                        <button class="btn btn-red" onclick="deleteProduct(${i})" style="padding:6px 12px;font-size:11px;">🗑️</button>
+                    </div>
+                </div>`).join('');
+        }
+
+        function addProduct() {
+            let html = '<h3>➕ افزودن محصول جدید</h3>';
+            html += '<input type="text" placeholder="دسته‌بندی (مثلاً کافه)" id="newCat">';
+            html += '<input type="text" placeholder="نام محصول" id="newName">';
+            html += '<input type="text" placeholder="قیمت (مثلاً ۱,۵۰۰,۰۰۰)" id="newPrice">';
+            html += '<input type="text" placeholder="لینک دمو محصول" id="newLink">';
+            html += '<input type="text" placeholder="لینک عکس (اختیاری)" id="newImg">';
+            html += '<textarea placeholder="توضیحات محصول" id="newDesc" rows="2"></textarea>';
+            html += '<button class="btn btn-green" onclick="submitNewProduct()" style="width:100%;">✅ ارسال</button>';
+            showModal(html);
+        }
+
+        function submitNewProduct() {
+            const newP = {
+                id: Date.now(),
+                cat: document.getElementById('newCat')?.value || 'عمومی',
+                name: document.getElementById('newName')?.value || 'بدون نام',
+                price: document.getElementById('newPrice')?.value || '۰',
+                link: document.getElementById('newLink')?.value || '',
+                img: document.getElementById('newImg')?.value || '🛠️',
+                desc: document.getElementById('newDesc')?.value || ''
+            };
+            products.push(newP);
+            localStorage.setItem('fastwebProducts', JSON.stringify(products));
+            closeModal();
+            loadAdminProducts();
+        }
+
+        function editProduct(index) {
+            const p = products[index];
+            let html = '<h3>✏️ ویرایش محصول</h3>';
+            html += `<input type="text" value="${p.cat}" id="editCat">`;
+            html += `<input type="text" value="${p.name}" id="editName">`;
+            html += `<input type="text" value="${p.price}" id="editPrice">`;
+            html += `<input type="text" value="${p.link || ''}" id="editLink">`;
+            html += `<input type="text" value="${p.img || ''}" id="editImg">`;
+            html += `<textarea id="editDesc" rows="2">${p.desc}</textarea>`;
+            html += `<button class="btn btn-green" onclick="submitEdit(${index})" style="width:100%;">💾 ذخیره</button>`;
+            showModal(html);
+        }
+
+        function submitEdit(index) {
+            products[index].cat = document.getElementById('editCat')?.value || products[index].cat;
+            products[index].name = document.getElementById('editName')?.value || products[index].name;
+            products[index].price = document.getElementById('editPrice')?.value || products[index].price;
+            products[index].link = document.getElementById('editLink')?.value || '';
+            products[index].img = document.getElementById('editImg')?.value || '';
+            products[index].desc = document.getElementById('editDesc')?.value || '';
+            localStorage.setItem('fastwebProducts', JSON.stringify(products));
+            closeModal();
+            loadAdminProducts();
+        }
+
+        function deleteProduct(index) {
+            if (confirm('آیا از حذف این محصول مطمئن هستید؟')) {
+                products.splice(index, 1);
+                localStorage.setItem('fastwebProducts', JSON.stringify(products));
+                loadAdminProducts();
+            }
+        }
+
+        function loadAdminTickets() {
+            document.getElementById('adminTicketList').innerHTML = tickets.length === 0 ? '<p style="text-align:center;color:#aaa;">تیکتی ثبت نشده</p>' :
+                tickets.map((t, i) => `
+                <div class="order-item" onclick="openAdminChat(${i})" style="cursor:pointer;">
+                    <strong>${t.name}</strong> | 📞 ${t.phone || ''}
+                    <br>📝 ${t.desc}
+                    <br>وضعیت: ${t.status === 'پاسخ داده شد' ? '✅ پاسخ داده شد' : '⏳ در انتظار'}
+                </div>`).join('');
+        }
+
+        function openAdminChat(index) {
+            const t = tickets[index];
+            let html = `<h3>💬 گفتگو با ${t.name}</h3><div class="chat-box">`;
+            html += `<div class="chat-msg user">${t.desc}</div>`;
+            if (t.replies) {
+                t.replies.forEach(r => html += `<div class="chat-msg admin">${r}</div>`);
+            }
+            html += '</div>';
+            html += '<div style="display:flex;gap:8px;"><input type="text" id="chatReply" placeholder="پاسخ شما...">';
+            html += `<button class="btn" onclick="sendAdminReply(${index})">📨 ارسال</button></div>`;
+            showModal(html);
+        }
+
+        function sendAdminReply(index) {
+            const reply = document.getElementById('chatReply')?.value;
+            if (!reply) return;
+            if (!tickets[index].replies) tickets[index].replies = [];
+            tickets[index].replies.push(reply);
+            tickets[index].status = 'پاسخ داده شد';
+            tickets[index].lastReply = Date.now();
+            localStorage.setItem('fastwebTickets', JSON.stringify(tickets));
+            closeModal();
+            loadAdminTickets();
+        }
+
+        // پاکسازی تیکت‌های قدیمی (۲ روز بدون پاسخ)
+        setInterval(() => {
+            const now = Date.now();
+            tickets = tickets.filter(t => !t.lastReply || (now - t.lastReply) < 2 * 24 * 60 * 60 * 1000);
+            localStorage.setItem('fastwebTickets', JSON.stringify(tickets));
+        }, 3600000);
+
+        // ========== توابع عمومی ==========
+        function showModal(html) {
+            document.getElementById('modalContent').innerHTML = '<span class="close-btn" onclick="closeModal()">✕</span>' + html;
+            document.getElementById('modalOverlay').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        window.onload = function() {
+            updateCartCount();
+            closeCardIntro();
+            document.getElementById('cardSamples').innerHTML = products.filter(p => p.cat === 'کارت').map(p => productHTML(p)).join('');
+            document.getElementById('popularProducts').innerHTML += products.slice(0, 4).map(p => productHTML(p)).join('');
+        };
+    </script>
+</body>
+</html>
